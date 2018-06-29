@@ -27,10 +27,12 @@ func main() {
 		return
 	}
 	f, _ := os.Open(source)
+	defer f.Close()
 
 	img, _ := webp.Decode(f)
 
 	fw, _ := os.Create(target)
+	defer fw.Close()
 
 	jpeg.Encode(fw, img, nil)
 
