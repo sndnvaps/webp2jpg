@@ -1,44 +1,98 @@
 package main
 
 import (
+	"errors"
 	"fmt"
+	"image"
+	"image/gif"
 	"image/jpeg"
+	"image/png"
 	"os"
 
 	"strings"
 
 	"golang.org/x/image/webp"
+
+	cli "gopkg.in/urfave/cli.v1"
 )
 
-func main() {
+func Encode(img image.Image, filename, Type string) error {
+	fw, _ := os.Create(filename)
+	defer fw.Close()
 
-	args := os.Args
-
-	if args == nil || len(args) != 3 {
-		usage()
-		return
+	switch Type {
+	case "jpeg", "jpg":
+		jpeg.Encode(fw, img, nil)
+	case "png":
+		png.Encode(fw, img)
+	case "gif":
+		gif.Encode(fw, img, nil)
+	default:
+		text := fmt.Sprintf("The type:[%s] not in support list", Type)
+		err := errors.New(text)
+		return err
 	}
 
-	source := args[1]
-	target := args[2]
+	fmt.Printf("Convert %s success\n", filename)
 
-	if !strings.HasSuffix(source, "webp") {
-		usage()
-		return
+	return nil
+}
+func Convert(ctx *cli.Context) error {
+	Type := ctx.String("type")
+	src := ctx.String("source")
+
+	//fmt.Printf("source file = %s\n", src)
+
+	if !strings.HasSuffix(src, ".webp") {
+		cli.ShowAppHelp(ctx)
 	}
-	f, _ := os.Open(source)
+
+	filenameOnly := strings.TrimSuffix(src, ".webp")
+	//fmt.Printf("filenameonly %s\n", filenameOnly)
+	var NewFileName string
+
+	switch Type {
+	case "jpeg", "jpg":
+		NewFileName = filenameOnly + ".jpg"
+	case "png":
+		NewFileName = filenameOnly + ".png"
+	case "gif":
+		NewFileName = filenameOnly + ".gif"
+	}
+
+	f, _ := os.Open(src)
 	defer f.Close()
 
 	img, _ := webp.Decode(f)
 
-	fw, _ := os.Create(target)
-	defer fw.Close()
-
-	jpeg.Encode(fw, img, nil)
-
+	return Encode(img, NewFileName, Type)
 }
 
-func usage() {
-	fmt.Printf("输入错误，请按照下面的格式输入: \n")
-	fmt.Printf("使用: webp2jpg source_image.webp output_image\n")
+func main() {
+
+	app := cli.NewApp()
+	app.Name = "webp2jpg"
+	app.Usage = "convert webp image to [jpeg|png|gif]"
+	app.Version = "0.0.1"
+	app.Authors = []cli.Author{
+		cli.Author{
+			Name:  "sndnvaps",
+			Email: "sndnvaps@gmail.com",
+		},
+	}
+
+	app.Flags = []cli.Flag{
+		cli.StringFlag{
+			Name:  "type,t",
+			Usage: "Convert to the type of image,support jpeg,png,gif",
+		},
+		cli.StringFlag{
+			Name:  "source,s",
+			Usage: "The file to convert,look like test.webp",
+		},
+	}
+
+	app.Action = Convert
+
+	app.Run(os.Args)
 }

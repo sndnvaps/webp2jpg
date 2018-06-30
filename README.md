@@ -19,5 +19,8 @@ convert the *.webp to *.jpg
 
 ```bash
   put the test.webp file into webp2jpg folder
-  ./webp2jpg test.webp test.jpg
+  ./webp2jpg -t jpg -s test.webp
+  ./webp2jpg --type jpg --source test.webp
+  ./webp2jpg --type png --source test.webp
+  ./webp2jpg --type gif --source test.webp
 ```
