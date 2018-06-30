@@ -2,6 +2,15 @@
 convert the *.webp to *.jpg
 
 
+# Dependence
+```bash
+  golang.org/x/image/webp
+``` 
+
+```bash
+  git clone https://github.com/golang/image $GOPATH/src/golang.org/x/image
+  cd $GOPATH/src/golang/x/image/webp && go build
+```
 # Download
 
 ```bash
@@ -21,6 +30,7 @@ convert the *.webp to *.jpg
   put the test.webp file into webp2jpg folder
   ./webp2jpg -t jpg -s test.webp
   ./webp2jpg --type jpg --source test.webp
+  ./webp2jpg --type jpeg --source test.webp
   ./webp2jpg --type png --source test.webp
   ./webp2jpg --type gif --source test.webp
 ```
