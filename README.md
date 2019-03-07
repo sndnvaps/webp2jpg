@@ -5,9 +5,11 @@ convert the *.webp to *.jpg
 # Dependence
 ```bash
   golang.org/x/image/webp
+  gopkg.in/urfave/cli.v1
 ``` 
 
 ```bash
+  go get gopkg.in/urfave/cli.v1
   git clone https://github.com/golang/image $GOPATH/src/golang.org/x/image
   cd $GOPATH/src/golang.org/x/image/webp && go build
 ```
