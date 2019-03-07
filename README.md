@@ -9,7 +9,7 @@ convert the *.webp to *.jpg
 
 ```bash
   git clone https://github.com/golang/image $GOPATH/src/golang.org/x/image
-  cd $GOPATH/src/golang/x/image/webp && go build
+  cd $GOPATH/src/golang.org/x/image/webp && go build
 ```
 # Download
 
