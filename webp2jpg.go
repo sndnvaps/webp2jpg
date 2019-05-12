@@ -11,6 +11,7 @@ import (
 
 	"strings"
 
+	"golang.org/x/image/bmp"
 	"golang.org/x/image/webp"
 
 	cli "gopkg.in/urfave/cli.v1"
@@ -27,6 +28,8 @@ func Encode(img image.Image, filename, Type string) error {
 		png.Encode(fw, img)
 	case "gif":
 		gif.Encode(fw, img, nil)
+	case "bmp":
+		bmp.Encode(fw, img)
 	default:
 		text := fmt.Sprintf("The type:[%s] not in support list", Type)
 		err := errors.New(text)
@@ -58,6 +61,8 @@ func Convert(ctx *cli.Context) error {
 		NewFileName = filenameOnly + ".png"
 	case "gif":
 		NewFileName = filenameOnly + ".gif"
+	case "bmp":
+		NewFileName = filenameOnly + ".bmp"
 	}
 
 	f, _ := os.Open(src)
@@ -72,8 +77,8 @@ func main() {
 
 	app := cli.NewApp()
 	app.Name = "webp2jpg"
-	app.Usage = "convert webp image to [jpeg|png|gif]"
-	app.Version = "0.0.1"
+	app.Usage = "convert webp image to [bmp|jpeg|png|gif]"
+	app.Version = "0.0.2"
 	app.Authors = []cli.Author{
 		cli.Author{
 			Name:  "sndnvaps",
@@ -84,7 +89,7 @@ func main() {
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
 			Name:  "type,t",
-			Usage: "Convert to the type of image,support jpeg,png,gif",
+			Usage: "Convert to the type of image,support bmp,jpeg,png,gif",
 		},
 		cli.StringFlag{
 			Name:  "source,s",

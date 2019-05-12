@@ -1,9 +1,10 @@
 # webp2jpg
-convert the *.webp to *.jpg
+convert the *.webp to *.jpg|*.bmp|*.png|*.gif
 
 
 # Dependence
 ```bash
+  golang.org/x/image/bmp
   golang.org/x/image/webp
   gopkg.in/urfave/cli.v1
 ``` 
@@ -11,7 +12,8 @@ convert the *.webp to *.jpg
 ```bash
   go get gopkg.in/urfave/cli.v1
   git clone https://github.com/golang/image $GOPATH/src/golang.org/x/image
-  cd $GOPATH/src/golang.org/x/image/webp && go build
+  cd $GOPATH/src/golang.org/x/image/webp && go install
+  cd $GOPATH/src/golang.org/x/image/bmp && go install
 ```
 # Download
 
@@ -26,11 +28,12 @@ convert the *.webp to *.jpg
   go build
 ```
 
-# Convert the webp file to jpeg
+# Convert the webp file to jpeg | png | gif | bmp
 
 ```bash
   put the test.webp file into webp2jpg folder
   ./webp2jpg -t jpg -s test.webp
+  ./webp2jpg -t bmp -s test.webp
   ./webp2jpg --type jpg --source test.webp
   ./webp2jpg --type jpeg --source test.webp
   ./webp2jpg --type png --source test.webp
