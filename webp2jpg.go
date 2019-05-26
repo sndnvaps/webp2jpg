@@ -8,10 +8,12 @@ import (
 	"image/jpeg"
 	"image/png"
 	"os"
+	"sort"
 
 	"strings"
 
 	"golang.org/x/image/bmp"
+	"golang.org/x/image/tiff"
 	"golang.org/x/image/webp"
 
 	cli "gopkg.in/urfave/cli.v1"
@@ -22,14 +24,16 @@ func Encode(img image.Image, filename, Type string) error {
 	defer fw.Close()
 
 	switch Type {
+	case "bmp":
+		bmp.Encode(fw, img)
+	case "gif":
+		gif.Encode(fw, img, nil)
 	case "jpeg", "jpg":
 		jpeg.Encode(fw, img, nil)
 	case "png":
 		png.Encode(fw, img)
-	case "gif":
-		gif.Encode(fw, img, nil)
-	case "bmp":
-		bmp.Encode(fw, img)
+	case "tiff":
+		tiff.Encode(fw, img, nil)
 	default:
 		text := fmt.Sprintf("The type:[%s] not in support list", Type)
 		err := errors.New(text)
@@ -55,14 +59,20 @@ func Convert(ctx *cli.Context) error {
 	var NewFileName string
 
 	switch Type {
+	case "bmp":
+		NewFileName = filenameOnly + ".bmp"
+	case "gif":
+		NewFileName = filenameOnly + ".gif"
 	case "jpeg", "jpg":
 		NewFileName = filenameOnly + ".jpg"
 	case "png":
 		NewFileName = filenameOnly + ".png"
-	case "gif":
-		NewFileName = filenameOnly + ".gif"
-	case "bmp":
-		NewFileName = filenameOnly + ".bmp"
+	case "tiff":
+		NewFileName = filenameOnly + ".tiff"
+	default:
+		text := fmt.Sprintf("The type:[%s] not in support list", Type)
+		err := errors.New(text)
+		return err
 	}
 
 	f, _ := os.Open(src)
@@ -77,8 +87,8 @@ func main() {
 
 	app := cli.NewApp()
 	app.Name = "webp2jpg"
-	app.Usage = "convert webp image to [bmp|jpeg|png|gif]"
-	app.Version = "0.0.2"
+	app.Usage = "convert webp image to [bmp|gif|jpeg|png|tiff]"
+	app.Version = "0.0.3"
 	app.Authors = []cli.Author{
 		cli.Author{
 			Name:  "sndnvaps",
@@ -89,7 +99,7 @@ func main() {
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
 			Name:  "type,t",
-			Usage: "Convert to the type of image,support bmp,jpeg,png,gif",
+			Usage: "Convert to the type of image,support bmp,gif,jpeg,png,tiff",
 		},
 		cli.StringFlag{
 			Name:  "source,s",
@@ -98,6 +108,8 @@ func main() {
 	}
 
 	app.Action = Convert
+
+	sort.Sort(cli.FlagsByName(app.Flags))
 
 	app.Run(os.Args)
 }

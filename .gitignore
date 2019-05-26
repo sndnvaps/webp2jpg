@@ -1,6 +1,8 @@
+*.bmp
+*.gif
 *.jpg
 *.png
-*.gif
+*.tiff
 *.webp
 *.exe
 webp2jpg
