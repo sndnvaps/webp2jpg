@@ -26,7 +26,7 @@ convert the *.webp to *.jpg|*.bmp|*.png|*.gif|*.tiff
 # Build && Run
 
 ```bash
-  cd $GOPATH/src/github.com/sndnvaps/webp2jpg
+  cd $GOPATH/src/github.com/sndnvaps/webp2jpg/cli
   go build
 ```
 

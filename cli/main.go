@@ -52,7 +52,7 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "webp2jpg"
 	app.Usage = "convert webp image to [bmp|gif|jpeg|png|tiff]"
-	app.Version = "0.0.3"
+	app.Version = "0.0.4"
 	app.Authors = []cli.Author{
 		cli.Author{
 			Name:  "sndnvaps",
