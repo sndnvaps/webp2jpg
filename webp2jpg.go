@@ -1,4 +1,4 @@
-package main
+package webp2jpg
 
 import (
 	"errors"
@@ -8,17 +8,20 @@ import (
 	"image/jpeg"
 	"image/png"
 	"os"
-	"sort"
 
 	"strings"
 
 	"golang.org/x/image/bmp"
 	"golang.org/x/image/tiff"
 	"golang.org/x/image/webp"
-
-	cli "gopkg.in/urfave/cli.v1"
 )
 
+// Encode(img Image.Image, filename,Type string)
+/*
+ * Encode image.Image stream to Type
+ * Type support : bmp,gif,jpeg,jpg,png,tiff
+ * filename: save name of the file
+ */
 func Encode(img image.Image, filename, Type string) error {
 	fw, _ := os.Create(filename)
 	defer fw.Close()
@@ -44,72 +47,20 @@ func Encode(img image.Image, filename, Type string) error {
 
 	return nil
 }
-func Convert(ctx *cli.Context) error {
-	Type := ctx.String("type")
-	src := ctx.String("source")
 
-	//fmt.Printf("source file = %s\n", src)
-
-	if !strings.HasSuffix(src, ".webp") {
-		cli.ShowAppHelp(ctx)
+//func Decode(filename string) (img image.Image,err error)
+/* filename: origin of *.webp file
+ * img: what we decode *.webp to
+ * err: error info
+ */
+func Decode(filename string) (img image.Image, err error) {
+	if !strings.HasSuffix(filename, ".webp") {
+		err = errors.New("filename not contain *.webp")
+		return nil, err
 	}
-
-	filenameOnly := strings.TrimSuffix(src, ".webp")
-	//fmt.Printf("filenameonly %s\n", filenameOnly)
-	var NewFileName string
-
-	switch Type {
-	case "bmp":
-		NewFileName = filenameOnly + ".bmp"
-	case "gif":
-		NewFileName = filenameOnly + ".gif"
-	case "jpeg", "jpg":
-		NewFileName = filenameOnly + ".jpg"
-	case "png":
-		NewFileName = filenameOnly + ".png"
-	case "tiff":
-		NewFileName = filenameOnly + ".tiff"
-	default:
-		text := fmt.Sprintf("The type:[%s] not in support list", Type)
-		err := errors.New(text)
-		return err
-	}
-
-	f, _ := os.Open(src)
+	f, _ := os.Open(filename)
 	defer f.Close()
 
-	img, _ := webp.Decode(f)
-
-	return Encode(img, NewFileName, Type)
-}
-
-func main() {
-
-	app := cli.NewApp()
-	app.Name = "webp2jpg"
-	app.Usage = "convert webp image to [bmp|gif|jpeg|png|tiff]"
-	app.Version = "0.0.3"
-	app.Authors = []cli.Author{
-		cli.Author{
-			Name:  "sndnvaps",
-			Email: "sndnvaps@gmail.com",
-		},
-	}
-
-	app.Flags = []cli.Flag{
-		cli.StringFlag{
-			Name:  "type,t",
-			Usage: "Convert to the type of image,support bmp,gif,jpeg,png,tiff",
-		},
-		cli.StringFlag{
-			Name:  "source,s",
-			Usage: "The file to convert,look like test.webp",
-		},
-	}
-
-	app.Action = Convert
-
-	sort.Sort(cli.FlagsByName(app.Flags))
-
-	app.Run(os.Args)
+	img, _ = webp.Decode(f)
+	return img, nil
 }
