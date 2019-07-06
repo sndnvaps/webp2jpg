@@ -40,5 +40,5 @@ convert the *.webp to *.jpg|*.bmp|*.png|*.gif|*.tiff
   ./webp2jpg --type jpeg --source test.webp
   ./webp2jpg --type png --source test.webp
   ./webp2jpg --type gif --source test.webp
-  */webp2jpg --type tiff --source test.webp
+  ./webp2jpg --type tiff --source test.webp
 ```
