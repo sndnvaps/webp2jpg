@@ -1,11 +1,9 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"sort"
-	"strings"
 
 	"github.com/sndnvaps/webp2jpg"
 	cli "gopkg.in/urfave/cli.v1"
@@ -17,11 +15,7 @@ func Convert(ctx *cli.Context) error {
 
 	//fmt.Printf("source file = %s\n", src)
 
-	if !strings.HasSuffix(src, ".webp") {
-		cli.ShowAppHelp(ctx)
-	}
-
-	filenameOnly := strings.TrimSuffix(src, ".webp")
+	filenameOnly := webp2jpg.RemovePathExt(src)
 	//fmt.Printf("filenameonly %s\n", filenameOnly)
 	var NewFileName string
 
@@ -38,12 +32,16 @@ func Convert(ctx *cli.Context) error {
 		NewFileName = filenameOnly + ".tiff"
 	default:
 		text := fmt.Sprintf("The type:[%s] not in support list", Type)
-		err := errors.New(text)
-		return err
+		fmt.Println(text)
 	}
 
 	img, _ := webp2jpg.Decode(src)
-
+	/*
+		if err != nil {
+			fmt.Println(err.Error())
+			cli.ShowAppHelp(ctx)
+		}
+	*/
 	return webp2jpg.Encode(img, NewFileName, Type)
 }
 
@@ -52,7 +50,7 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "webp2jpg"
 	app.Usage = "convert webp image to [bmp|gif|jpeg|png|tiff]"
-	app.Version = "0.0.4"
+	app.Version = "0.0.5"
 	app.Authors = []cli.Author{
 		cli.Author{
 			Name:  "sndnvaps",

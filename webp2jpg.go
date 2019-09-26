@@ -8,8 +8,7 @@ import (
 	"image/jpeg"
 	"image/png"
 	"os"
-
-	"strings"
+	"path/filepath"
 
 	"golang.org/x/image/bmp"
 	"golang.org/x/image/tiff"
@@ -39,8 +38,7 @@ func Encode(img image.Image, filename, Type string) error {
 		tiff.Encode(fw, img, nil)
 	default:
 		text := fmt.Sprintf("The type:[%s] not in support list", Type)
-		err := errors.New(text)
-		return err
+		fmt.Println(text)
 	}
 
 	fmt.Printf("Convert %s success\n", filename)
@@ -54,13 +52,39 @@ func Encode(img image.Image, filename, Type string) error {
  * err: error info
  */
 func Decode(filename string) (img image.Image, err error) {
-	if !strings.HasSuffix(filename, ".webp") {
-		err = errors.New("filename not contain *.webp")
-		return nil, err
-	}
+
 	f, _ := os.Open(filename)
 	defer f.Close()
 
-	img, _ = webp.Decode(f)
+	Ext := filepath.Ext(filename)
+	switch Ext {
+	case ".bmp":
+		img, err = bmp.Decode(f)
+	case ".gif":
+		img, err = gif.Decode(f)
+	case "jpeg", "jpg":
+		img, err = jpeg.Decode(f)
+	case ".png":
+		img, err = png.Decode(f)
+	case ".tiff":
+		img, err = tiff.Decode(f)
+	case ".webp":
+		img, err = webp.Decode(f)
+
+	default:
+		text := fmt.Sprintf("The type:[%s] not in support list", Ext)
+		err := errors.New(text)
+		return nil, err
+	}
+
 	return img, nil
+}
+
+func RemovePathExt(path string) string {
+	for i := len(path) - 1; i >= 0 && !os.IsPathSeparator(path[i]); i-- {
+		if path[i] == '.' {
+			return path[:i]
+		}
+	}
+	return path
 }
