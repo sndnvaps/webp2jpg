@@ -6,12 +6,16 @@ import (
 	"sort"
 
 	"github.com/sndnvaps/webp2jpg"
-	cli "gopkg.in/urfave/cli.v1"
+	"github.com/urfave/cli/v2"
 )
 
 func Convert(ctx *cli.Context) error {
 	Type := ctx.String("type")
 	src := ctx.String("source")
+	if Type == "" || src == "" {
+		fmt.Println("You must specify a type")
+		cli.ShowAppHelpAndExit(ctx, -1)
+	}
 
 	//fmt.Printf("source file = %s\n", src)
 
@@ -50,22 +54,24 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "webp2jpg"
 	app.Usage = "convert webp image to [bmp|gif|jpeg|png|tiff]"
-	app.Version = "0.0.5"
-	app.Authors = []cli.Author{
-		cli.Author{
+	app.Version = "0.1.0"
+	app.Authors = []*cli.Author{
+		{
 			Name:  "sndnvaps",
 			Email: "sndnvaps@gmail.com",
 		},
 	}
 
 	app.Flags = []cli.Flag{
-		cli.StringFlag{
-			Name:  "type,t",
-			Usage: "Convert to the type of image,support bmp,gif,jpeg,png,tiff",
+		&cli.StringFlag{
+			Name:    "type",
+			Aliases: []string{"t"},
+			Usage:   "Convert to the type of image,support bmp,gif,jpeg,png,tiff",
 		},
-		cli.StringFlag{
-			Name:  "source,s",
-			Usage: "The file to convert,look like test.webp",
+		&cli.StringFlag{
+			Name:    "source",
+			Aliases: []string{"s"},
+			Usage:   "The file to convert,look like test.webp",
 		},
 	}
 
